@@ -1,8 +1,13 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
 trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'
 
 variables:
   solution: '**/*.sln'
@@ -10,6 +15,12 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    feedsToUse: 'select'
+    vstsFeed: 'my-vsts-feed'
+
 - task: UseDotNet@2
   displayName: Install .NET 6
   inputs:
@@ -17,30 +28,24 @@ steps:
     version: '6.x'
 
 - task: DotNetCoreCLI@2
-  displayName: Restore dependencies
-  inputs:
-    command: 'restore'
-    projects: '$(solution)'  # Use the solution variable to specify the solution file
-    feedsToUse: 'select'
-    vstsFeed: 'my-vsts-feed'
-
-- task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    command: 'build'
-    projects: '$(solution)'  # Use the solution variable to specify the solution file
+    command: build
+    projects: '**/*.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: Unit Test
+  displayName: unit test
   inputs:
-    command: 'test'
-    projects: '**/webtest.csproj'  # Adjust this if the path to the test project is different
+    command: test
+    projects: '**/webtest.csproj'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: Code Coverage
+  displayName: code coverage
   inputs:
-    command: 'test'
-    projects: '**/webtest.csproj'  # Adjust this if the path to the test project is different
+    command: test
+    projects: '**/webtest.csproj'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+
+
