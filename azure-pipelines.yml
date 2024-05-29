@@ -43,12 +43,11 @@ steps:
     summaryFileLocation: '$(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml'
 
 - script: |
-        threshold= 100
-        echo "Threshold: $threshold"
-        lineCoverageXml=$(awk '/<line-rate>/{gsub(/<\\/?line-rate>/,"",$1); print $1}' $(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml)
-        echo "Line coverage value from XML: $lineCoverageXml"
-        lineCoverage=$(echo $lineCoverageXml | awk '{print int($1*100)}')
-        echo "Line coverage percentage: $lineCoverage"
+        threshold=100
+        coverageFile=$(find $(Build.SourcesDirectory) -name "coverage.cobertura.xml")
+        echo "Coverage file: $coverageFile"
+        lineCoverage=$(awk '/<line-rate>/{gsub(/<\/?line-rate>/,"",$1); print int($1*100)}' "$coverageFile")
+        echo "Line coverage: $lineCoverage"
         if [ $lineCoverage -lt $threshold ]; then
           echo "Line coverage is $lineCoverage%, which is below the threshold of $threshold%"
           exit 1
