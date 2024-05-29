@@ -44,7 +44,11 @@ steps:
 
 - script: |
         threshold= 100
-        lineCoverage=$(awk '/<line-rate>/{gsub(/<\/?line-rate>/,"",$1); print int($1*100)}' $(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml)
+        echo "Threshold: $threshold"
+        lineCoverageXml=$(awk '/<line-rate>/{gsub(/<\\/?line-rate>/,"",$1); print $1}' $(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml)
+        echo "Line coverage value from XML: $lineCoverageXml"
+        lineCoverage=$(echo $lineCoverageXml | awk '{print int($1*100)}')
+        echo "Line coverage percentage: $lineCoverage"
         if [ $lineCoverage -lt $threshold ]; then
           echo "Line coverage is $lineCoverage%, which is below the threshold of $threshold%"
           exit 1
