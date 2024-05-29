@@ -1,8 +1,3 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - main
 
@@ -15,12 +10,6 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    feedsToUse: 'select'
-    vstsFeed: 'my-vsts-feed'
-
 - task: UseDotNet@2
   displayName: Install .NET 6
   inputs:
@@ -28,24 +17,30 @@ steps:
     version: '6.x'
 
 - task: DotNetCoreCLI@2
+  displayName: Restore dependencies
+  inputs:
+    command: 'restore'
+    projects: '$(solution)'  # Use the solution variable to specify the solution file
+    feedsToUse: 'select'
+    vstsFeed: 'my-vsts-feed'
+
+- task: DotNetCoreCLI@2
   displayName: Build
   inputs:
-    command: build
-    projects: '**/*.csproj'
+    command: 'build'
+    projects: '$(solution)'  # Use the solution variable to specify the solution file
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: unit test
+  displayName: Unit Test
   inputs:
-    command: test
-    projects: '**/webtest.csproj'
+    command: 'test'
+    projects: '**/webtest.csproj'  # Adjust this if the path to the test project is different
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: code coverage
+  displayName: Code Coverage
   inputs:
-    command: test
-    projects: '**/webtest.csproj'
+    command: 'test'
+    projects: '**/webtest.csproj'  # Adjust this if the path to the test project is different
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
-
-
