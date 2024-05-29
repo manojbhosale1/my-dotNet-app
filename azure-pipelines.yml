@@ -33,6 +33,10 @@ steps:
     command: test
     projects: '**/webtest.csproj'
     arguments: '--configuration $(buildConfiguration)'
-
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish Code Coverage Results'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml'
 
 
