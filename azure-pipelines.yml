@@ -79,3 +79,9 @@ stages:
         tags: |
           $(tag)
           latest
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'M0247 (69596986-325b-4b38-bcc4-094a814d1082)'
+        appType: 'webAppLinux'
+        appName: 'dotnetcodewebapp'
+        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
