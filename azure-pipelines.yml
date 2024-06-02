@@ -39,6 +39,21 @@ stages:
         command: build
         projects: '**/*.csproj'
         arguments: '--configuration $(buildConfiguration)'
+    
+    - task: DotNetCoreCLI@2
+      displayName: 'Running Unit tests'
+      inputs:
+        command: test
+        projects: '**/webtest.csproj'
+        arguments: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=./MyCoverage/'
+        publishTestResults: true
+    
+    - task: PublishCodeCoverageResults@2
+      displayName: 'Publish Code Coverage Results'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Build.SourcesDirectory)/**/MyCoverage/coverage.cobertura.xml'
+
 
     - task: DotNetCoreCLI@2
       inputs:
