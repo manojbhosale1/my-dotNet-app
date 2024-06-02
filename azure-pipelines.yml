@@ -75,7 +75,7 @@ stages:
         azureSubscription: 'M0247 (69596986-325b-4b38-bcc4-094a814d1082)'
         appType: 'webAppLinux'
         appName: 'dotnetcodewebapp'
-        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+        package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
 
     - task: Docker@2
       displayName: Build and push an image to container registry
