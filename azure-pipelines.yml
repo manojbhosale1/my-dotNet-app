@@ -59,16 +59,19 @@ stages:
       inputs:
         command: publish
         publishWebProjects: True
-        zipAfterPublish: false
+        zipAfterPublish: True
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-      
-
     
     - pwsh: |       
        Get-ChildItem -Path $(Build.ArtifactStagingDirectory)\*.* -Recurse -Force | Out-String -Width 180
       errorActionPreference: continue
       displayName: 'List content'
       continueOnError: true
+  
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)' 
+        artifactName: 'mywebapp-artifact'
 
     - task: Docker@2
       displayName: Build and push an image to container registry
