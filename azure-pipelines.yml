@@ -61,6 +61,13 @@ stages:
         publishWebProjects: True
         zipAfterPublish: false
         arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+      
+    - task: AzureWebApp@1
+      inputs:
+        azureSubscription: 'M0247 (69596986-325b-4b38-bcc4-094a814d1082)'
+        appType: 'webAppLinux'
+        appName: 'dotnetcodewebapp'
+        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
     
     - pwsh: |       
        Get-ChildItem -Path $(Build.ArtifactStagingDirectory)\*.* -Recurse -Force | Out-String -Width 180
@@ -79,9 +86,4 @@ stages:
         tags: |
           $(tag)
           latest
-    - task: AzureWebApp@1
-      inputs:
-        azureSubscription: 'M0247 (69596986-325b-4b38-bcc4-094a814d1082)'
-        appType: 'webAppLinux'
-        appName: 'dotnetcodewebapp'
-        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    
